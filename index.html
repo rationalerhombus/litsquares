@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Book Grid</title>
+    <style>
+        /* CSS: Making it look like Telematrix */
+        body {
+            background-color: #fdf5e6; /* Cream color */
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+            color: #003366; /* Dark Blue */
+        }
+
+        h1 { margin-bottom: 20px; }
+
+        /* The Grid Layout */
+        .game-container {
+            display: grid;
+            grid-template-columns: 100px 150px 150px 150px; /* Labels + 3 Columns */
+            grid-template-rows: 80px 150px 150px 150px;    /* Labels + 3 Rows */
+            border: 3px solid #003366; /* Dark Blue outline */
+        }
+
+        /* Styling every box */
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #003366; /* Dark Blue lines */
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Headers have the cream background like the page */
+        .header {
+            background-color: #fdf5e6;
+            font-size: 0.9rem;
+        }
+
+        /* Input styling for the game squares */
+        input {
+            width: 90%;
+            height: 80%;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        .corner { background-color: transparent; border: none; }
+    </style>
+</head>
+<body>
+
+    <h1>The Book Grid</h1>
+
+    <div class="game-container">
+        <div class="cell corner"></div>
+        <div class="cell header">Became a Movie/TV Show</div>
+        <div class="cell header">Published Before 1950</div>
+        <div class="cell header">Won a Major Award</div>
+
+        <div class="cell header">Stephen King</div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+
+        <div class="cell header">Historical Fiction</div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+
+        <div class="cell header">1st Person POV</div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+        <div class="cell"><input type="text" placeholder="?"></div>
+    </div>
+
+</body>
+</html>
