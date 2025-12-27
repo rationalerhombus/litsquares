@@ -7,12 +7,40 @@
     <style>
         body { background-color: #fdf5e6; font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; padding-top: 30px; color: #003366; }
         #status-bar { margin-bottom: 20px; font-size: 1.5rem; font-weight: bold; }
-        .game-container { display: grid; grid-template-columns: 110px 150px 150px 150px; grid-template-rows: 80px 150px 150px 150px; border: 3px solid #003366; background-color: #003366; gap: 2px; }
-        .cell { display: flex; align-items: center; justify-content: center; background-color: white; padding: 10px; text-align: center; font-weight: bold; position: relative; }
-        .header { background-color: #fdf5e6; font-size: 0.85rem; text-transform: uppercase; }
+        
+        /* THE GRID FIX */
+        .game-container { 
+            display: grid; 
+            grid-template-columns: 110px 150px 150px 150px; 
+            grid-template-rows: 80px 150px 150px 150px; 
+            border: 3px solid #003366; 
+            background-color: #003366; /* This creates the dark lines */
+            gap: 2px; /* This defines the thickness of the grid lines */
+        }
+
+        .cell { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-color: white; /* This makes the boxes white inside the blue grid */
+            padding: 10px; 
+            text-align: center; 
+            font-weight: bold; 
+            position: relative; 
+            min-height: 50px;
+        }
+
+        .header { 
+            background-color: #fdf5e6; /* Headers match the body cream color */
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+        }
+
         input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: 1rem; background: transparent; }
+        
         .correct { background-color: #d4edda !important; color: #155724; }
         .wrong { background-color: #f8d7da !important; color: #721c24; }
+        
         .suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #003366; z-index: 10; display: none; max-height: 150px; overflow-y: auto; }
         .suggestion-item { padding: 5px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #eee; color: black; text-align: left; }
     </style>
@@ -24,7 +52,6 @@
     <div class="game-container" id="grid"></div>
 
     <script>
-        // 1. THE REPOSITORY POOLS (Grouped to ensure "Possibility")
         const authors = [
             { name: "Stephen King", tags: ["modern", "movie", "award"] },
             { name: "Jane Austen", tags: ["classic", "movie", "pre1950"] },
@@ -35,18 +62,7 @@
             { name: "Charles Dickens", tags: ["classic", "pre1950", "movie"] },
             { name: "J.K. Rowling", tags: ["modern", "movie"] },
             { name: "Margaret Atwood", tags: ["modern", "movie", "award"] },
-            { name: "Ernest Hemingway", tags: ["classic", "pre1950", "award"] },
-            { name: "Virginia Woolf", tags: ["classic", "pre1950"] },
-            { name: "Gabriel García Márquez", tags: ["modern", "award"] },
-            { name: "Neil Gaiman", tags: ["modern", "movie"] },
-            { name: "Maya Angelou", tags: ["modern", "award"] },
-            { name: "Mark Twain", tags: ["classic", "pre1950"] },
-            { name: "Sylvia Plath", tags: ["classic", "award"] },
-            { name: "James Baldwin", tags: ["modern", "classic"] },
-            { name: "Kazuo Ishiguro", tags: ["modern", "award", "movie"] },
-            { name: "Emily Henry", tags: ["modern"] },
-            { name: "Rick Riordan", tags: ["modern", "movie"] }
-            // ADD MORE AUTHORS HERE TO REACH 365
+            { name: "Ernest Hemingway", tags: ["classic", "pre1950", "award"] }
         ];
 
         const columns = [
@@ -57,7 +73,6 @@
             { label: "Modern Era", type: "modern", tagReq: "modern" }
         ];
 
-        // 2. DAILY SEED LOGIC (Pacific Time 9 PM)
         function getDailySeed() {
             const now = new Date();
             const ptDate = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) - (8 * 3600000) + (3 * 3600000));
@@ -69,38 +84,30 @@
             return x - Math.floor(x);
         }
 
-        // 3. THE "POSSIBILITY" ENGINE
-        // This function forces the grid to only pick authors that match the column requirements
         function generateGame() {
             const seed = getDailySeed();
             let selectedCols = [...columns].sort(() => seededRandom(seed) - 0.5).slice(0, 3);
-            
-            // Filter authors: Must have at least one tag that matches a selected column to be eligible
-            let eligibleAuthors = authors.filter(a => 
-                selectedCols.some(c => a.tags.includes(c.tagReq))
-            );
-
+            let eligibleAuthors = authors.filter(a => selectedCols.some(c => a.tags.includes(c.tagReq)));
             let selectedRows = eligibleAuthors.sort(() => seededRandom(seed + 1) - 0.5).slice(0, 3);
             return { selectedRows, selectedCols };
         }
 
         const { selectedRows, selectedCols } = generateGame();
-
-        // 4. GRID GENERATION
         const gridElement = document.getElementById('grid');
+        
         let html = `<div class="cell header"></div>`;
         selectedCols.forEach(c => html += `<div class="cell header">${c.label}</div>`);
         selectedRows.forEach(r => {
             html += `<div class="cell header">${r.name}</div>`;
             selectedCols.forEach(c => {
-                html += `<div class="cell" data-row="${r.name}" data-col="${c.type}" data-row-tags="${r.tags.join(',')}">
+                html += `<div class="cell" data-row="${r.name}" data-col="${c.type}">
                             <input type="text" class="book-input"><div class="suggestions"></div>
                          </div>`;
             });
         });
         gridElement.innerHTML = html;
 
-        // 5. GUESS LOGIC
+        // Guessing and API logic
         let guessesLeft = 9;
         const guessDisplay = document.getElementById('guess-count');
         const inputs = document.querySelectorAll('.book-input');
@@ -154,3 +161,6 @@
                 }
             });
         });
+    </script>
+</body>
+</html>
