@@ -5,95 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Book Grid | Daily Challenge</title>
     <style>
-        /* 1. RESET & BASE BOXING */
-        * { box-sizing: border-box; } /* Prevents borders from pushing width out */
-
-        body { 
-            background-color: #fdf5e6; 
-            font-family: 'Georgia', serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px 10px; 
-            color: #003366; 
-            margin: 0; 
-            overflow-x: hidden; /* Prevents side-scrolling */
-        }
-
+        * { box-sizing: border-box; }
+        body { background-color: #fdf5e6; font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; padding: 20px 10px; color: #003366; margin: 0; overflow-x: hidden; }
         h1 { font-size: 1.8rem; margin-bottom: 10px; text-align: center; }
         #status-bar { margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; }
-        
-        /* 2. ENCLOSED GRID SYSTEM */
-        .game-container { 
-            display: grid; 
-            grid-template-columns: 80px 1fr 1fr 1fr; 
-            grid-template-rows: 65px 100px 100px 100px; 
-            background-color: #003366; /* The line color */
-            border: 3px solid #003366; /* The outer frame */
-            gap: 2px; /* The inner line thickness */
-            width: 100%;
-            max-width: 450px; /* Keeps it tight on desktop */
-            margin: 0 auto;
-        }
-
-        .cell { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background-color: white; 
-            padding: 4px; 
-            text-align: center; 
-            font-weight: bold; 
-            position: relative; 
-            word-wrap: break-word; /* Prevents text from leaking out */
-        }
-
-        .header { 
-            background-color: #fdf5e6; 
-            font-size: 0.65rem; 
-            text-transform: uppercase; 
-            line-height: 1.2;
-            padding: 2px;
-        }
-
-        input { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            outline: none; 
-            text-align: center; 
-            font-family: inherit; 
-            font-size: 0.8rem; 
-            background: transparent;
-        }
-        
-        /* 3. FEEDBACK COLORS */
+        .game-container { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; grid-template-rows: 65px 100px 100px 100px; background-color: #003366; border: 3px solid #003366; gap: 2px; width: 100%; max-width: 450px; margin: 0 auto; }
+        .cell { display: flex; align-items: center; justify-content: center; background-color: white; padding: 4px; text-align: center; font-weight: bold; position: relative; word-wrap: break-word; }
+        .header { background-color: #fdf5e6; font-size: 0.65rem; text-transform: uppercase; line-height: 1.2; padding: 2px; }
+        input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: 0.8rem; background: transparent; }
         .correct { background-color: #d4edda !important; color: #155724; }
         .wrong { background-color: #f8d7da !important; color: #721c24; }
-        
-        /* 4. SUGGESTIONS POPUP */
-        .suggestions { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            background: white; 
-            border: 1px solid #003366; 
-            z-index: 100; 
-            display: none; 
-            max-height: 110px; 
-            overflow-y: auto; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .suggestion-item { padding: 8px 4px; cursor: pointer; font-size: 0.7rem; border-bottom: 1px solid #eee; color: black; text-align: left; line-height: 1.1; }
-
-        /* Tablet/Desktop adjustments */
-        @media (min-width: 480px) {
-            .game-container { grid-template-columns: 110px 140px 140px 140px; grid-template-rows: 80px 140px 140px 140px; }
-            .header { font-size: 0.8rem; }
-            input { font-size: 0.95rem; }
-            h1 { font-size: 2.5rem; }
-        }
+        .suggestions { position: absolute; top: 0; left: 0; width: 100%; background: white; border: 1px solid #003366; z-index: 100; display: none; max-height: 110px; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .suggestion-item { padding: 10px 6px; cursor: pointer; font-size: 0.75rem; border-bottom: 1px solid #eee; color: black; text-align: left; line-height: 1.2; }
+        @media (min-width: 480px) { .game-container { grid-template-columns: 110px 140px 140px 140px; grid-template-rows: 80px 140px 140px 140px; } .header { font-size: 0.8rem; } input { font-size: 0.95rem; } h1 { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
@@ -103,7 +27,6 @@
     <div class="game-container" id="grid"></div>
 
     <script>
-        // DATA POOL
         const authors = [
             { name: "Stephen King", can: ["movie", "award", "modern"] },
             { name: "Jane Austen", can: ["movie", "classic", "pre1950"] },
@@ -127,7 +50,6 @@
             { label: "Modern Era", id: "modern" }
         ];
 
-        // SEED LOGIC
         function getDailySeed() {
             const now = new Date();
             const ptDate = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) - (8 * 3600000) + (3 * 3600000));
@@ -139,15 +61,12 @@
             return x - Math.floor(x);
         }
 
-        // GRID GENERATOR
         function generateGuaranteedGrid() {
             let seed = getDailySeed();
             let attempts = 0;
             while (attempts < 100) {
                 let selectedCols = [...columns].sort(() => seededRandom(seed + attempts) - 0.5).slice(0, 3);
-                let validAuthors = authors.filter(auth => 
-                    selectedCols.every(col => auth.can.includes(col.id))
-                );
+                let validAuthors = authors.filter(auth => selectedCols.every(col => auth.can.includes(col.id)));
                 if (validAuthors.length >= 3) {
                     let selectedRows = validAuthors.sort(() => seededRandom(seed + attempts + 1) - 0.5).slice(0, 3);
                     return { selectedRows, selectedCols };
@@ -158,8 +77,6 @@
         }
 
         const { selectedRows, selectedCols } = generateGuaranteedGrid();
-
-        // RENDER GRID
         const gridElement = document.getElementById('grid');
         let html = `<div class="cell header"></div>`;
         selectedCols.forEach(c => html += `<div class="cell header">${c.label}</div>`);
@@ -174,7 +91,6 @@
         });
         gridElement.innerHTML = html;
 
-        // GAMEPLAY LOGIC
         let guessesLeft = 9;
         const guessDisplay = document.getElementById('guess-count');
         const inputs = document.querySelectorAll('.book-input');
@@ -192,10 +108,11 @@
                     data.docs.forEach(book => {
                         const div = document.createElement('div');
                         div.className = 'suggestion-item';
-                        div.innerText = `${book.title} (${book.first_publish_year || '?'})`;
+                        // Removed year from display text
+                        div.innerText = `${book.title}${book.author_name ? ' by ' + book.author_name[0] : ''}`;
                         div.onclick = () => {
                             input.value = book.title;
-                            input.setAttribute('data-yr', book.first_publish_year);
+                            input.setAttribute('data-yr', book.first_publish_year || 9999);
                             input.setAttribute('data-auth', book.author_name ? book.author_name.join(',') : '');
                             input.setAttribute('data-movie', book.id_imdb ? 'true' : 'false');
                             suggestionBox.style.display = 'none';
@@ -216,10 +133,11 @@
                     const hasMovie = input.getAttribute('data-movie') === 'true';
 
                     let correct = false;
+                    // Logic: Must match author AND specific column criteria
                     if (selAuth.toLowerCase().includes(targetRow.toLowerCase())) {
                         if (targetCol === 'movie' && hasMovie) correct = true;
                         if (targetCol === 'pre1950' && selYr < 1950) correct = true;
-                        if (targetCol === 'award') correct = true; 
+                        if (targetCol === 'award') correct = true; // Still broad for now
                         if (targetCol === 'classic' && selYr < 1970) correct = true;
                         if (targetCol === 'modern' && selYr >= 1970) correct = true;
                     }
@@ -231,12 +149,11 @@
                         input.disabled = true; 
                     } else { 
                         cell.classList.add('wrong'); 
-                        setTimeout(() => cell.classList.remove('wrong'), 1000); 
-                        input.value = ""; 
+                        setTimeout(() => { cell.classList.remove('wrong'); input.value = ""; }, 1000); 
                     }
                     
                     if (guessesLeft === 0) {
-                        alert("Game Over! Check back tomorrow at 9 PM PT.");
+                        alert("Game Over! Check back tomorrow.");
                         inputs.forEach(i => i.disabled = true);
                     }
                 }
