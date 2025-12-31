@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litsquares | Modern Book Grid</title>
+    <title>Litsquares | Daily Challenge</title>
     <style>
         :root {
             --bg: #fdf5e6;
             --text: #1a1a1a;
-            --primary: #6b4e71; /* Sophisticated Millennial Purple */
+            --primary: #6b4e71;
             --correct: #8fbc8f;
             --wrong: #e9967a;
             --cell-bg: #ffffff;
             --border: #333;
+            --modal-bg: rgba(0,0,0,0.7);
         }
 
         [data-theme="dark"] {
@@ -32,22 +33,23 @@
             min-height: 100vh;
         }
 
-        h1 { font-size: clamp(1.5rem, 5vw, 2.2rem); margin: 10px 0; font-weight: 800; letter-spacing: -1px; }
+        header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        h1 { font-size: 1.8rem; margin: 0; font-weight: 800; letter-spacing: -1px; }
         
         #status-bar { 
-            margin-bottom: 15px; font-size: 1rem; font-weight: 600; 
-            background: var(--cell-bg); padding: 8px 20px; border-radius: 20px;
+            margin: 15px 0; font-size: 0.9rem; font-weight: 600; 
+            background: var(--cell-bg); padding: 8px 15px; border-radius: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* The Grid - Scalable and Square */
+        /* The Grid */
         .game-container { 
             display: grid; 
             grid-template-columns: 0.8fr 1fr 1fr 1fr; 
             grid-template-rows: 0.8fr 1fr 1fr 1fr; 
             gap: 6px; 
             width: 95vw; 
-            max-width: 500px; 
+            max-width: 480px; 
             aspect-ratio: 1 / 1;
         }
 
@@ -56,13 +58,13 @@
             background-color: var(--cell-bg); border-radius: 8px;
             padding: 4px; text-align: center; position: relative; 
             border: 2px solid var(--border);
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            font-size: clamp(0.7rem, 2.2vw, 0.85rem);
         }
 
         .header { 
             background-color: transparent; border: none;
             font-weight: 800; text-transform: uppercase; 
-            color: var(--primary); font-size: clamp(0.6rem, 1.8vw, 0.75rem);
+            color: var(--primary); font-size: clamp(0.55rem, 1.8vw, 0.7rem);
         }
 
         input { 
@@ -77,51 +79,82 @@
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
         }
         @keyframes pop {
             0% { transform: scale(0.9); }
-            50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
 
-        /* Modern Suggestion UI */
+        /* Suggestion UI */
         .suggestions { 
             position: absolute; top: 100%; left: 0; width: 140%; 
             background: var(--cell-bg); border: 2px solid var(--border);
             z-index: 1000; display: none; border-radius: 8px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            max-height: 200px; overflow-y: auto;
+            max-height: 180px; overflow-y: auto;
         }
         .suggestion-item { 
             padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;
-            font-size: 0.8rem; text-align: left; color: var(--text);
+            font-size: 0.75rem; text-align: left; color: var(--text);
         }
 
-        .controls { margin-top: 20px; display: flex; gap: 10px; }
-        button { 
-            padding: 10px 20px; border-radius: 8px; border: none; 
-            background: var(--primary); color: white; font-weight: bold; cursor: pointer;
+        /* Instruction Modal */
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg); display: flex; align-items: center; justify-content: center;
+            z-index: 2000; visibility: hidden; opacity: 0; transition: 0.3s;
+        }
+        #modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal {
+            background: var(--bg); padding: 25px; border-radius: 15px;
+            max-width: 400px; width: 90%; color: var(--text);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal h2 { margin-top: 0; }
+        .modal p { line-height: 1.5; font-size: 0.9rem; }
+        .close-btn { 
+            background: var(--primary); color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold;
         }
 
-        #share-btn { display: none; background: #333; }
+        footer { margin-top: auto; padding: 20px 0; font-size: 0.8rem; opacity: 0.7; font-weight: 600; }
+        .icon-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
-    <h1 onclick="toggleTheme()">Litsquares</h1>
-    <div id="status-bar">Guesses: <span id="guess-count">9</span></div>
+    <header>
+        <button class="icon-btn" onclick="toggleInstructions()">❓</button>
+        <h1>Litsquares</h1>
+        <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+    </header>
+
+    <div id="status-bar">Guesses Left: <span id="guess-count">9</span></div>
 
     <div class="game-container" id="grid"></div>
 
-    <div class="controls">
-        <button onclick="toggleTheme()">🌓 Theme</button>
-        <button id="share-btn" onclick="shareResult()">Share Grid ↗️</button>
+    <div style="margin-top: 20px;">
+        <button id="share-btn" onclick="shareResult()" style="display:none; padding:10px 20px; border-radius:8px; background:var(--primary); color:white; border:none; font-weight:bold;">Share Score ↗️</button>
+    </div>
+
+    <footer id="daily-date"></footer>
+
+    <!-- INSTRUCTIONS MODAL -->
+    <div id="modal-overlay">
+        <div class="modal">
+            <h2>How to Play</h2>
+            <p>Fill the grid with books that match both the <b>Author</b> and the <b>Category</b>.</p>
+            <p>• <b>BookTok:</b> Authors viral on TikTok/Socials.<br>
+               • <b>Romance/Spice:</b> Known for chemistry-heavy plots.<br>
+               • <b>Angst:</b> Millennial dread or emotional heavy-hitters.</p>
+            <p>You have <b>9 guesses</b> to complete the grid. Good luck!</p>
+            <button class="close-btn" onclick="toggleInstructions()">Got it!</button>
+        </div>
     </div>
 
     <script>
-        // MILLENNIAL ERA AUTHORS & LOGIC
         const authors = [
             { name: "Emily Henry", can: ["booktok", "romance", "modern"] },
             { name: "Sarah J. Maas", can: ["booktok", "fantasy", "modern"] },
@@ -142,18 +175,28 @@
             { label: "Award Winner", id: "award" }
         ];
 
-        let guessesLeft = 9;
-        let scoreGrid = [ [0,0,0], [0,0,0], [0,0,0] ]; // For sharing results
+        // Set Date
+        const today = new Date();
+        document.getElementById('daily-date').innerText = today.toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
 
+        // Toggle Functions
         function toggleTheme() {
-            const body = document.body;
-            body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
+            document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+        }
+        function toggleInstructions() {
+            document.getElementById('modal-overlay').classList.toggle('active');
         }
 
-        function getDailySeed() {
-            return new Date().setHours(0,0,0,0);
+        // Auto-show instructions for new users
+        if (!localStorage.getItem('visited')) {
+            setTimeout(toggleInstructions, 500);
+            localStorage.setItem('visited', 'true');
         }
 
+        // Grid Generation (Seeded by Date)
+        function getDailySeed() { return new Date().setHours(0,0,0,0); }
         function seededRandom(seed) {
             var x = Math.sin(seed) * 10000;
             return x - Math.floor(x);
@@ -168,8 +211,10 @@
 
         const { selectedRows, selectedCols } = generateGrid();
         const gridElement = document.getElementById('grid');
+        let guessesLeft = 9;
+        let scoreGrid = [ [0,0,0], [0,0,0], [0,0,0] ];
 
-        // Build Grid
+        // Build Grid HTML
         let html = `<div class="cell header"></div>`;
         selectedCols.forEach(c => html += `<div class="cell header">${c.label}</div>`);
         selectedRows.forEach((r, rIdx) => {
@@ -183,88 +228,64 @@
         });
         gridElement.innerHTML = html;
 
-        // Interaction Logic
+        // Input & Logic
         const inputs = document.querySelectorAll('.book-input');
         inputs.forEach(input => {
             input.addEventListener('input', debounce(async (e) => {
                 const query = e.target.value;
-                const suggestionBox = e.target.nextElementSibling;
-                if (query.length < 3) { suggestionBox.style.display = 'none'; return; }
-                
-                const response = await fetch(`https://openlibrary.org/search.json?title=${query}&limit=5`);
-                const data = await response.json();
-                suggestionBox.innerHTML = '';
-                
+                const box = e.target.nextElementSibling;
+                if (query.length < 3) { box.style.display = 'none'; return; }
+                const resp = await fetch(`https://openlibrary.org/search.json?title=${query}&limit=5`);
+                const data = await resp.json();
+                box.innerHTML = '';
                 data.docs.forEach(book => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
                     div.innerText = `${book.title} (${book.first_publish_year || '?'})`;
                     div.onclick = () => validateGuess(input, book);
-                    suggestionBox.appendChild(div);
+                    box.appendChild(div);
                 });
-                suggestionBox.style.display = 'block';
+                box.style.display = 'block';
             }, 300));
         });
 
-        function validateGuess(input, bookData) {
-            if (guessesLeft <= 0) return;
-            
+        function validateGuess(input, book) {
             const cell = input.parentElement;
-            const suggestionBox = cell.querySelector('.suggestions');
-            suggestionBox.style.display = 'none';
-            
-            const targetRow = cell.dataset.row;
-            const targetCol = cell.dataset.col;
-            const rIdx = cell.dataset.ridx;
-            const cIdx = cell.dataset.cidx;
-
-            const authorMatch = (bookData.author_name || []).some(a => a.toLowerCase().includes(targetRow.toLowerCase()));
-            
-            // Logic: Is the author known for this category? 
-            // In a real app, you'd verify if the SPECIFIC book matches, 
-            // but for this grid logic, we verify the Author/Category relationship.
-            const authorObj = authors.find(a => a.name === targetRow);
-            const isCorrect = authorMatch && authorObj.can.includes(targetCol);
+            cell.querySelector('.suggestions').style.display = 'none';
+            const authorObj = authors.find(a => a.name === cell.dataset.row);
+            const authorMatch = (book.author_name || []).some(a => a.toLowerCase().includes(cell.dataset.row.toLowerCase()));
+            const isCorrect = authorMatch && authorObj.can.includes(cell.dataset.col);
 
             guessesLeft--;
             document.getElementById('guess-count').innerText = guessesLeft;
 
             if (isCorrect) {
-                input.value = bookData.title;
+                input.value = book.title;
                 cell.classList.add('correct');
                 input.disabled = true;
-                scoreGrid[rIdx][cIdx] = 1;
+                scoreGrid[cell.dataset.ridx][cell.dataset.cidx] = 1;
             } else {
                 cell.classList.add('wrong');
                 setTimeout(() => cell.classList.remove('wrong'), 500);
                 input.value = "";
             }
-
             if (guessesLeft === 0) endGame();
         }
 
         function endGame() {
-            document.querySelectorAll('input').forEach(i => i.disabled = true);
-            document.getElementById('share-btn').style.display = 'block';
-            alert("Game Over! How did you do?");
+            inputs.forEach(i => i.disabled = true);
+            document.getElementById('share-btn').style.display = 'inline-block';
         }
 
         function shareResult() {
-            let emojiGrid = "Litsquares Daily\n";
-            scoreGrid.forEach(row => {
-                row.forEach(cell => emojiGrid += cell === 1 ? "🟩" : "⬜");
-                emojiGrid += "\n";
-            });
-            navigator.clipboard.writeText(emojiGrid);
-            alert("Results copied to clipboard! 📋");
+            let grid = "Litsquares Daily\n";
+            scoreGrid.forEach(r => { grid += r.map(c => c ? "🟩" : "⬜").join("") + "\n"; });
+            navigator.clipboard.writeText(grid);
+            alert("Score copied!");
         }
 
-        function debounce(func, timeout = 300){
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => { func.apply(this, args); }, timeout);
-            };
+        function debounce(f, t) {
+            let timer; return (...a) => { clearTimeout(timer); timer = setTimeout(() => f.apply(this, a), t); };
         }
     </script>
 </body>
