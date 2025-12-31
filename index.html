@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litsquares | The Big Daily Grid</title>
+    <title>Litsquares | Daily Challenge</title>
     <style>
         :root {
             --bg: #fdf5e6; --text: #1a1a1a; --primary: #4a5d4a; --correct: #8fbc8f;
@@ -31,7 +31,7 @@
             font-size: clamp(0.6rem, 2.5vw, 0.85rem); line-height: 1.1; overflow: hidden;
         }
         .header { background: transparent; border: none; font-weight: 900; text-transform: uppercase; color: var(--primary); font-size: clamp(0.45rem, 1.8vw, 0.65rem); }
-        input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: inherit; background: transparent; color: var(--text); padding: 0; }
+        input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: inherit; background: transparent; color: var(--text); }
         .correct { background-color: var(--correct) !important; color: white; font-weight: 700; animation: pop 0.3s ease; }
         .wrong { animation: shake 0.4s ease; background-color: var(--wrong) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
@@ -62,15 +62,15 @@
     <div id="modal-overlay">
         <div class="modal">
             <h2 style="margin-top:0">How to Play</h2>
-            <p>Fill the grid with books that match the <b>Author</b> (row) and the <b>Category</b> (column).</p>
-            <p>Every cell in today's grid has at least one correct book. <b>Sally Rooney</b> won't be matched with <b>WWII</b> because she hasn't written one!</p>
+            <p>Fill the grid by matching the <b>Author</b> (row) and the <b>Category</b> (column).</p>
+            <p>Today's categories are guaranteed to match all three authors on the board. No impossible squares!</p>
             <p>Resets every night at <b>9:00 PM PT</b>.</p>
-            <button class="close-btn" onclick="toggleInstructions()">Start Puzzle</button>
+            <button class="close-btn" onclick="toggleInstructions()">Start Playing</button>
         </div>
     </div>
 
     <script>
-        const columns = [
+        const categories = [
             { label: "BookTok Viral", id: "booktok" }, { label: "Regency Era", id: "regency" },
             { label: "WWII Setting", id: "wwii" }, { label: "Psych Thriller", id: "thriller" },
             { label: "Award Winner", id: "award" }, { label: "Magical Realism", id: "magic" },
@@ -87,56 +87,40 @@
         ];
 
         const authors = [
-            { name: "Emily Henry", tags: ["booktok", "enemies", "grumpy", "smalltown", "screen", "lit_fic"] },
-            { name: "Sarah J. Maas", tags: ["booktok", "romantasy", "enemies", "high_fantasy", "family"] },
-            { name: "Sally Rooney", tags: ["unhinged", "award", "lit_fic", "screen", "family"] },
-            { name: "Ottessa Moshfegh", tags: ["unhinged", "lit_fic", "award", "gothic"] },
-            { name: "R.F. Kuang", tags: ["academia", "booktok", "award", "high_fantasy", "thriller", "lit_fic"] },
-            { name: "Taylor Jenkins Reid", tags: ["booktok", "family", "screen", "mixed_media", "award"] },
-            { name: "Kristin Hannah", tags: ["wwii", "family", "screen", "lit_fic", "smalltown"] },
-            { name: "Anthony Doerr", tags: ["wwii", "award", "lit_fic", "screen"] },
-            { name: "Freida McFadden", tags: ["thriller", "unhinged", "mystery", "booktok"] },
-            { name: "Julia Quinn", tags: ["regency", "screen", "family", "enemies"] },
-            { name: "Georgette Heyer", tags: ["regency", "classic", "enemies", "hist_mystery"] },
-            { name: "Agatha Christie", tags: ["mystery", "classic", "hist_mystery", "screen", "award"] },
-            { name: "Colleen Hoover", tags: ["booktok", "family", "thriller", "smalltown"] },
-            { name: "Donna Tartt", tags: ["academia", "mystery", "award", "lit_fic", "gothic"] },
-            { name: "Madeline Miller", tags: ["booktok", "magic", "award", "high_fantasy", "queer"] },
-            { name: "Rebecca Yarros", tags: ["booktok", "romantasy", "enemies", "high_fantasy", "wwii"] },
-            { name: "Brit Bennett", tags: ["award", "family", "lit_fic", "booktok"] },
-            { name: "Bonnie Garmus", tags: ["debut", "booktok", "screen", "lit_fic"] },
-            { name: "Han Kang", tags: ["translated", "award", "unhinged", "lit_fic"] },
-            { name: "Janice Hallett", tags: ["mixed_media", "mystery", "thriller"] },
-            { name: "Holly Jackson", tags: ["booktok", "mystery", "mixed_media", "thriller"] },
-            { name: "Silvia Moreno-Garcia", tags: ["gothic", "magic", "booktok", "hist_mystery", "translated"] },
-            { name: "Casey McQuiston", tags: ["queer", "booktok", "screen", "enemies", "debut"] },
-            { name: "Elena Ferrante", tags: ["translated", "lit_fic", "family", "mystery"] },
-            { name: "Alice Hoffman", tags: ["magic", "family", "lit_fic", "gothic"] },
-            { name: "Susanna Clarke", tags: ["magic", "academia", "high_fantasy", "award"] },
-            { name: "Jade Lee", tags: ["regency", "enemies", "grumpy", "romantasy"] },
-            { name: "Amelia B. Edwards", tags: ["classic", "nonfiction", "gothic"] },
+            // Thrillers & Contemporary (Elizabeth)
+            { name: "Freida McFadden", tags: ["thriller", "mystery", "unhinged", "booktok"] },
+            { name: "Sally Rooney", tags: ["lit_fic", "screen", "award", "family", "unhinged"] },
+            { name: "Emily Henry", tags: ["romance", "booktok", "smalltown", "enemies", "grumpy", "screen", "family"] },
+            { name: "Taylor Jenkins Reid", tags: ["booktok", "family", "screen", "mixed_media", "lit_fic", "award"] },
+            { name: "Gillian Flynn", tags: ["thriller", "unhinged", "mystery", "screen", "lit_fic"] },
             { name: "Ruth Ware", tags: ["thriller", "mystery", "gothic", "academia"] },
-            { name: "Alex Michaelides", tags: ["thriller", "mystery", "academia", "unhinged"] },
-            { name: "Mona Awad", tags: ["unhinged", "academia", "gothic", "magic", "lit_fic"] },
-            { name: "Toni Morrison", tags: ["classic", "award", "magic", "lit_fic", "family"] },
-            { name: "Ann Patchett", tags: ["family", "lit_fic", "award", "screen"] },
+            { name: "Holly Jackson", tags: ["mystery", "mixed_media", "booktok", "thriller"] },
+            
+            // Regency & Romance (Jade Lee)
+            { name: "Julia Quinn", tags: ["regency", "screen", "family", "enemies", "romance"] },
+            { name: "Jade Lee", tags: ["regency", "enemies", "grumpy", "romantasy", "romance"] },
+            { name: "Georgette Heyer", tags: ["regency", "classic", "enemies", "mystery"] },
+            { name: "Ali Hazelwood", tags: ["academia", "booktok", "grumpy", "romance"] },
+            { name: "Sarah J. Maas", tags: ["high_fantasy", "romantasy", "enemies", "booktok", "screen"] },
+            
+            // History & Classics (Megan Davitt)
+            { name: "Kristin Hannah", tags: ["wwii", "family", "screen", "lit_fic", "smalltown", "award"] },
+            { name: "Anthony Doerr", tags: ["wwii", "award", "lit_fic", "screen"] },
+            { name: "Agatha Christie", tags: ["mystery", "classic", "hist_mystery", "screen", "award"] },
+            { name: "Ocean Vuong", tags: ["queer", "award", "lit_fic", "debut", "nonfiction"] },
+            { name: "Toni Morrison", tags: ["classic", "award", "lit_fic", "family", "magic"] },
+            { name: "Kazuo Ishiguro", tags: ["award", "lit_fic", "magic", "translated", "screen"] },
+            { name: "Han Kang", tags: ["translated", "award", "unhinged", "lit_fic"] },
+            { name: "Donna Tartt", tags: ["academia", "mystery", "award", "lit_fic", "gothic"] },
+            { name: "Min Jin Lee", tags: ["family", "lit_fic", "award", "debut"] },
+            { name: "Madeline Miller", tags: ["magic", "high_fantasy", "award", "booktok", "queer"] },
+            { name: "Gabrielle Zevin", tags: ["booktok", "mixed_media", "lit_fic", "award", "screen"] },
+            { name: "R.F. Kuang", tags: ["academia", "high_fantasy", "award", "booktok", "thriller", "lit_fic"] },
+            { name: "Ottessa Moshfegh", tags: ["unhinged", "lit_fic", "award", "gothic", "mystery"] },
             { name: "Abraham Verghese", tags: ["family", "lit_fic", "award", "debut"] },
-            { name: "Kate Quinn", tags: ["wwii", "hist_mystery", "screen", "mystery"] },
-            { name: "Lisa Jewell", tags: ["thriller", "mystery", "family"] },
-            { name: "Riley Sager", tags: ["thriller", "gothic", "mystery", "booktok"] },
-            { name: "Grady Hendrix", tags: ["gothic", "mystery", "booktok", "nonfiction"] },
-            { name: "Leigh Bardugo", tags: ["academia", "high_fantasy", "booktok", "magic"] },
-            { name: "Ocean Vuong", tags: ["queer", "award", "lit_fic", "debut"] },
-            { name: "Min Jin Lee", tags: ["family", "lit_fic", "award", "historical"] },
-            { name: "Carley Fortune", tags: ["booktok", "smalltown", "grumpy", "romance"] },
-            { name: "Abby Jimenez", tags: ["booktok", "grumpy", "smalltown", "magic"] },
-            { name: "Gabrielle Zevin", tags: ["booktok", "mixed_media", "lit_fic", "award"] },
-            { name: "Karen M. McManus", tags: ["mystery", "mixed_media", "booktok", "thriller"] },
-            { name: "Mary Balogh", tags: ["regency", "classic", "enemies", "family"] },
-            { name: "Toshikazu Kawaguchi", tags: ["translated", "magic", "smalltown"] },
-            { name: "Vera Kurian", tags: ["unhinged", "academia", "thriller", "debut"] },
-            { name: "Robyn Harding", tags: ["unhinged", "thriller", "family"] },
-            { name: "Susanna Clarke", tags: ["magic", "academia", "high_fantasy"] }
+            { name: "Susanna Clarke", tags: ["magic", "academia", "high_fantasy", "award"] },
+            { name: "Alice Hoffman", tags: ["magic", "family", "lit_fic", "gothic"] }
+            // ... (Expandable to 50+)
         ];
 
         function getPTDate() {
@@ -151,22 +135,31 @@
 
         function seededRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
 
-        function generatePerfectGrid() {
+        function generateGuaranteedGrid() {
             let seed = gameDate.getFullYear() * 10000 + (gameDate.getMonth() + 1) * 100 + gameDate.getDate();
             let attempts = 0;
-            while(attempts < 1000) {
-                let cols = [...columns].sort(() => seededRandom(seed + attempts) - 0.5).slice(0, 3);
-                // The crucial filter: Author must have tags for ALL selected columns
-                let rows = [...authors].filter(a => cols.every(c => a.tags.includes(c.id)))
-                                       .sort(() => seededRandom(seed + attempts + 1) - 0.5).slice(0, 3);
+
+            while(attempts < 2000) {
+                // 1. CHOOSE 3 AUTHORS FIRST
+                let rows = [...authors].sort(() => seededRandom(seed + attempts) - 0.5).slice(0, 3);
                 
-                if (rows.length >= 3) return { rows: rows.slice(0,3), cols };
+                // 2. FIND CATEGORIES THEY ALL SHARE
+                let sharedTags = categories.filter(cat => 
+                    rows.every(auth => auth.tags.includes(cat.id))
+                );
+
+                // 3. IF WE HAVE 3+ SHARED TAGS, WE HAVE A VALID GRID
+                if (sharedTags.length >= 3) {
+                    let cols = sharedTags.sort(() => seededRandom(seed + attempts + 1) - 0.5).slice(0, 3);
+                    return { rows, cols };
+                }
                 attempts++;
             }
-            return { rows: authors.slice(0,3), cols: columns.slice(0,3) }; // Fallback
+            // Fallback just in case
+            return { rows: authors.slice(0,3), cols: categories.slice(0,3) };
         }
 
-        const { rows, cols } = generatePerfectGrid();
+        const { rows, cols } = generateGuaranteedGrid();
         let guessesLeft = 9;
         let score = [[0,0,0],[0,0,0],[0,0,0]];
 
@@ -228,7 +221,7 @@
         function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark"; }
         function toggleInstructions() { document.getElementById('modal-overlay').classList.toggle('active'); }
         function debounce(f, t) { let timer; return (...a) => { clearTimeout(timer); timer = setTimeout(() => f.apply(this, a), t); }; }
-        if (!localStorage.getItem('ls_v4')) { toggleInstructions(); localStorage.setItem('ls_v4', 't'); }
+        if (!localStorage.getItem('ls_v5')) { toggleInstructions(); localStorage.setItem('ls_v5', 't'); }
     </script>
 </body>
 </html>
