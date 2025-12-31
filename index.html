@@ -10,40 +10,45 @@
             --wrong: #e9967a; --cell-bg: #ffffff; --border: #2c2c2c; --modal-bg: rgba(0,0,0,0.9);
         }
         [data-theme="dark"] {
-            --bg: #121212; --text: #e0e0e0; --cell-bg: #1e1e1e; --border: #555;
+            --bg: #121212; --text: #e0e0e0; --cell-bg: #1e1e1e; --border: #444;
         }
-        * { box-sizing: border-box; transition: background 0.2s; }
+        * { box-sizing: border-box; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
         body { 
-            background-color: var(--bg); font-family: 'Inter', system-ui, -apple-system, serif; 
+            background-color: var(--bg); font-family: 'Inter', -apple-system, sans-serif; 
             display: flex; flex-direction: column; align-items: center; padding: 10px; 
             color: var(--text); margin: 0; min-height: 100vh;
         }
-        header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px solid var(--border); margin-bottom: 10px; }
-        h1 { font-size: 2rem; margin: 0; font-weight: 900; letter-spacing: -2px; }
-        #status-bar { margin: 10px 0; font-size: 0.95rem; font-weight: 800; background: var(--cell-bg); padding: 8px 25px; border-radius: 30px; border: 2px solid var(--border); }
+        header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 2px solid var(--border); }
+        h1 { font-size: 1.8rem; margin: 0; font-weight: 900; letter-spacing: -2px; }
+        #status-bar { margin: 15px 0; font-size: 0.9rem; font-weight: 800; background: var(--cell-bg); padding: 8px 20px; border-radius: 30px; border: 2px solid var(--border); }
+        
         .game-container { 
             display: grid; grid-template-columns: 0.8fr 1fr 1fr 1fr; grid-template-rows: 0.8fr 1fr 1fr 1fr; 
-            gap: 6px; width: 96vw; max-width: 500px; aspect-ratio: 1 / 1;
+            gap: 6px; width: 95vw; max-width: 480px; aspect-ratio: 1 / 1;
         }
         .cell { 
             display: flex; align-items: center; justify-content: center; background-color: var(--cell-bg); 
             border-radius: 6px; padding: 4px; text-align: center; position: relative; border: 2px solid var(--border);
-            font-size: clamp(0.6rem, 2.5vw, 0.85rem); line-height: 1.1; overflow: hidden;
+            font-size: clamp(0.6rem, 2.2vw, 0.8rem); line-height: 1.1;
         }
         .header { background: transparent; border: none; font-weight: 900; text-transform: uppercase; color: var(--primary); font-size: clamp(0.45rem, 1.8vw, 0.65rem); }
         input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: inherit; background: transparent; color: var(--text); }
-        .correct { background-color: var(--correct) !important; color: white; font-weight: 700; animation: pop 0.3s ease; }
+        
+        .correct { background-color: var(--correct) !important; color: white; animation: pop 0.3s ease; font-weight: bold; }
         .wrong { animation: shake 0.4s ease; background-color: var(--wrong) !important; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
         @keyframes pop { 0% { transform: scale(0.9); } 100% { transform: scale(1); } }
+
         .suggestions { position: absolute; top: 100%; left: 0; width: 180%; background: var(--cell-bg); border: 2px solid var(--border); z-index: 1000; display: none; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 150px; overflow-y: auto; }
-        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #444; font-size: 0.7rem; text-align: left; }
+        .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #444; font-size: 0.7rem; text-align: left; color: var(--text); }
+
         #modal-overlay { position: fixed; inset: 0; background: var(--modal-bg); display: flex; align-items: center; justify-content: center; z-index: 2000; visibility: hidden; opacity: 0; }
         #modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal { background: var(--bg); padding: 30px; border-radius: 20px; max-width: 450px; width: 90%; }
-        .close-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: 900; margin-top: 20px; }
-        footer { margin-top: auto; padding: 20px; font-size: 0.8rem; font-weight: 700; opacity: 0.8; }
-        .icon-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); }
+        .modal { background: var(--bg); padding: 25px; border-radius: 20px; max-width: 400px; width: 90%; }
+        .close-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: 900; margin-top: 15px; }
+
+        footer { margin-top: auto; padding: 20px; font-size: 0.75rem; font-weight: 700; opacity: 0.7; text-align: center; }
+        .icon-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text); }
     </style>
 </head>
 <body>
@@ -56,21 +61,21 @@
 
     <div id="status-bar">Guesses: <span id="guess-count">9</span></div>
     <div class="game-container" id="grid"></div>
-    <div style="margin-top: 20px;"><button id="share-btn" onclick="shareResult()" style="display:none; padding:15px 30px; border-radius:50px; background:var(--primary); color:white; border:none; font-weight:900; cursor:pointer;">SHARE GRID ↗️</button></div>
+    <div style="margin-top: 15px;"><button id="share-btn" onclick="shareResult()" style="display:none; padding:12px 25px; border-radius:50px; background:var(--primary); color:white; border:none; font-weight:900; cursor:pointer;">SHARE SCORE ↗️</button></div>
     <footer id="daily-date"></footer>
 
     <div id="modal-overlay">
         <div class="modal">
             <h2 style="margin-top:0">How to Play</h2>
-            <p>Fill the grid by matching the <b>Author</b> (row) and the <b>Category</b> (column).</p>
-            <p>Today's categories are guaranteed to match all three authors on the board. No impossible squares!</p>
-            <p>Resets every night at <b>9:00 PM PT</b>.</p>
-            <button class="close-btn" onclick="toggleInstructions()">Start Playing</button>
+            <p>Fill the grid with books that match the <b>Author</b> (row) and the <b>Category</b> (column).</p>
+            <p><b>Logic:</b> Today's categories are strictly filtered. If an author is on the board, they are guaranteed to have at least one book for every category shown.</p>
+            <p>Resets daily at <b>9:00 PM PT</b>.</p>
+            <button class="close-btn" onclick="toggleInstructions()">Play</button>
         </div>
     </div>
 
     <script>
-        const categories = [
+        const allCategories = [
             { label: "BookTok Viral", id: "booktok" }, { label: "Regency Era", id: "regency" },
             { label: "WWII Setting", id: "wwii" }, { label: "Psych Thriller", id: "thriller" },
             { label: "Award Winner", id: "award" }, { label: "Magical Realism", id: "magic" },
@@ -80,47 +85,64 @@
             { label: "Gothic Vibes", id: "gothic" }, { label: "Non-Fiction", id: "nonfiction" },
             { label: "Romantasy", id: "romantasy" }, { label: "Mystery", id: "mystery" },
             { label: "Queer Lead", id: "queer" }, { label: "Small Town", id: "smalltown" },
-            { label: "Screen Adaptation", id: "screen" }, { label: "Historical Mystery", id: "hist_mystery" },
+            { label: "Screen Adaptation", id: "screen" }, { label: "Hist-Mystery", id: "hist_mystery" },
             { label: "Mixed Media", id: "mixed_media" }, { label: "High Fantasy", id: "high_fantasy" },
             { label: "Literary Fiction", id: "lit_fic" }, { label: "Debut Novel", id: "debut" },
             { label: "Classic/Legacy", id: "classic" }
         ];
 
-        const authors = [
-            // Thrillers & Contemporary (Elizabeth)
-            { name: "Freida McFadden", tags: ["thriller", "mystery", "unhinged", "booktok"] },
-            { name: "Sally Rooney", tags: ["lit_fic", "screen", "award", "family", "unhinged"] },
-            { name: "Emily Henry", tags: ["romance", "booktok", "smalltown", "enemies", "grumpy", "screen", "family"] },
-            { name: "Taylor Jenkins Reid", tags: ["booktok", "family", "screen", "mixed_media", "lit_fic", "award"] },
-            { name: "Gillian Flynn", tags: ["thriller", "unhinged", "mystery", "screen", "lit_fic"] },
-            { name: "Ruth Ware", tags: ["thriller", "mystery", "gothic", "academia"] },
-            { name: "Holly Jackson", tags: ["mystery", "mixed_media", "booktok", "thriller"] },
-            
-            // Regency & Romance (Jade Lee)
-            { name: "Julia Quinn", tags: ["regency", "screen", "family", "enemies", "romance"] },
-            { name: "Jade Lee", tags: ["regency", "enemies", "grumpy", "romantasy", "romance"] },
-            { name: "Georgette Heyer", tags: ["regency", "classic", "enemies", "mystery"] },
-            { name: "Ali Hazelwood", tags: ["academia", "booktok", "grumpy", "romance"] },
-            { name: "Sarah J. Maas", tags: ["high_fantasy", "romantasy", "enemies", "booktok", "screen"] },
-            
-            // History & Classics (Megan Davitt)
-            { name: "Kristin Hannah", tags: ["wwii", "family", "screen", "lit_fic", "smalltown", "award"] },
-            { name: "Anthony Doerr", tags: ["wwii", "award", "lit_fic", "screen"] },
+        const allAuthors = [
+            // Synchronized with reading habits of Megan, Jade, and Elizabeth
+            { name: "Emily Henry", tags: ["booktok", "enemies", "grumpy", "smalltown", "screen", "lit_fic", "family"] },
+            { name: "Sally Rooney", tags: ["unhinged", "award", "lit_fic", "screen", "family", "debut"] },
+            { name: "Kristin Hannah", tags: ["wwii", "family", "screen", "lit_fic", "smalltown", "award", "hist_mystery"] },
+            { name: "Anthony Doerr", tags: ["wwii", "award", "lit_fic", "screen", "family"] },
+            { name: "Kate Quinn", tags: ["wwii", "hist_mystery", "mystery", "screen", "award"] },
+            { name: "Sarah J. Maas", tags: ["booktok", "romantasy", "enemies", "high_fantasy", "magic", "screen"] },
+            { name: "Julia Quinn", tags: ["regency", "screen", "family", "enemies", "classic"] },
+            { name: "Freida McFadden", tags: ["thriller", "unhinged", "mystery", "booktok", "debut"] },
+            { name: "Donna Tartt", tags: ["academia", "mystery", "award", "lit_fic", "gothic", "debut"] },
             { name: "Agatha Christie", tags: ["mystery", "classic", "hist_mystery", "screen", "award"] },
-            { name: "Ocean Vuong", tags: ["queer", "award", "lit_fic", "debut", "nonfiction"] },
-            { name: "Toni Morrison", tags: ["classic", "award", "lit_fic", "family", "magic"] },
+            { name: "Georgette Heyer", tags: ["regency", "classic", "enemies", "mystery", "hist_mystery"] },
+            { name: "Taylor Jenkins Reid", tags: ["booktok", "family", "screen", "mixed_media", "lit_fic", "award"] },
+            { name: "R.F. Kuang", tags: ["academia", "booktok", "award", "high_fantasy", "thriller", "lit_fic", "translated"] },
+            { name: "Ocean Vuong", tags: ["queer", "award", "lit_fic", "debut", "nonfiction", "family"] },
+            { name: "Han Kang", tags: ["translated", "award", "unhinged", "lit_fic", "magic"] },
+            { name: "Ottessa Moshfegh", tags: ["unhinged", "lit_fic", "award", "gothic", "mystery", "debut"] },
+            { name: "Gillian Flynn", tags: ["thriller", "unhinged", "mystery", "screen", "lit_fic", "debut"] },
+            { name: "Ruth Ware", tags: ["thriller", "mystery", "gothic", "academia", "booktok"] },
+            { name: "Silvia Moreno-Garcia", tags: ["gothic", "magic", "booktok", "hist_mystery", "translated", "lit_fic"] },
+            { name: "Madeline Miller", tags: ["magic", "high_fantasy", "award", "booktok", "queer", "debut"] },
+            { name: "Casey McQuiston", tags: ["queer", "booktok", "screen", "enemies", "debut", "family"] },
+            { name: "Toni Morrison", tags: ["classic", "award", "lit_fic", "family", "magic", "gothic"] },
+            { name: "Abraham Verghese", tags: ["family", "lit_fic", "award", "debut", "nonfiction"] },
+            { name: "Susanna Clarke", tags: ["magic", "academia", "high_fantasy", "award", "debut"] },
+            { name: "Alice Hoffman", tags: ["magic", "family", "lit_fic", "gothic", "screen"] },
+            { name: "Bonnie Garmus", tags: ["debut", "booktok", "screen", "lit_fic", "award"] },
+            { name: "Rebecca Yarros", tags: ["booktok", "romantasy", "enemies", "high_fantasy", "screen"] },
+            { name: "Lisa Jewell", tags: ["thriller", "mystery", "family", "booktok"] },
+            { name: "Riley Sager", tags: ["thriller", "gothic", "mystery", "booktok", "unhinged"] },
+            { name: "Holly Jackson", tags: ["mystery", "mixed_media", "booktok", "thriller", "debut"] },
             { name: "Kazuo Ishiguro", tags: ["award", "lit_fic", "magic", "translated", "screen"] },
-            { name: "Han Kang", tags: ["translated", "award", "unhinged", "lit_fic"] },
-            { name: "Donna Tartt", tags: ["academia", "mystery", "award", "lit_fic", "gothic"] },
-            { name: "Min Jin Lee", tags: ["family", "lit_fic", "award", "debut"] },
-            { name: "Madeline Miller", tags: ["magic", "high_fantasy", "award", "booktok", "queer"] },
+            { name: "Elena Ferrante", tags: ["translated", "lit_fic", "family", "mystery", "screen"] },
+            { name: "Mona Awad", tags: ["unhinged", "academia", "gothic", "magic", "lit_fic"] },
+            { name: "Ann Patchett", tags: ["family", "lit_fic", "award", "screen", "nonfiction"] },
+            { name: "Brit Bennett", tags: ["award", "family", "lit_fic", "booktok", "debut"] },
+            { name: "Min Jin Lee", tags: ["family", "lit_fic", "award", "debut", "translated"] },
+            { name: "Casey McQuiston", tags: ["queer", "booktok", "screen", "enemies", "debut"] },
             { name: "Gabrielle Zevin", tags: ["booktok", "mixed_media", "lit_fic", "award", "screen"] },
-            { name: "R.F. Kuang", tags: ["academia", "high_fantasy", "award", "booktok", "thriller", "lit_fic"] },
-            { name: "Ottessa Moshfegh", tags: ["unhinged", "lit_fic", "award", "gothic", "mystery"] },
-            { name: "Abraham Verghese", tags: ["family", "lit_fic", "award", "debut"] },
-            { name: "Susanna Clarke", tags: ["magic", "academia", "high_fantasy", "award"] },
-            { name: "Alice Hoffman", tags: ["magic", "family", "lit_fic", "gothic"] }
-            // ... (Expandable to 50+)
+            { name: "Janice Hallett", tags: ["mixed_media", "mystery", "thriller", "debut"] },
+            { name: "Grady Hendrix", tags: ["gothic", "mystery", "booktok", "nonfiction", "unhinged"] },
+            { name: "Leigh Bardugo", tags: ["academia", "high_fantasy", "booktok", "magic", "screen"] },
+            { name: "Alex Michaelides", tags: ["thriller", "mystery", "academia", "unhinged", "debut"] },
+            { name: "Carley Fortune", tags: ["booktok", "smalltown", "grumpy", "family"] },
+            { name: "Abby Jimenez", tags: ["booktok", "grumpy", "smalltown", "family", "magic"] },
+            { name: "Colleen Hoover", tags: ["booktok", "family", "thriller", "smalltown", "unhinged"] },
+            { name: "Mary Balogh", tags: ["regency", "classic", "enemies", "family"] },
+            { name: "Toshikazu Kawaguchi", tags: ["translated", "magic", "smalltown", "fantasy"] },
+            { name: "Vera Kurian", tags: ["unhinged", "academia", "thriller", "debut"] },
+            { name: "Robyn Harding", tags: ["unhinged", "thriller", "family", "mystery"] },
+            { name: "Anthony Bourdain", tags: ["nonfiction", "classic", "screen"] }
         ];
 
         function getPTDate() {
@@ -135,31 +157,34 @@
 
         function seededRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
 
-        function generateGuaranteedGrid() {
+        function generatePerfectGrid() {
             let seed = gameDate.getFullYear() * 10000 + (gameDate.getMonth() + 1) * 100 + gameDate.getDate();
             let attempts = 0;
 
-            while(attempts < 2000) {
-                // 1. CHOOSE 3 AUTHORS FIRST
-                let rows = [...authors].sort(() => seededRandom(seed + attempts) - 0.5).slice(0, 3);
+            while(attempts < 5000) {
+                // 1. Pick 3 random categories
+                let cols = [...allCategories].sort(() => seededRandom(seed + attempts) - 0.5).slice(0, 3);
                 
-                // 2. FIND CATEGORIES THEY ALL SHARE
-                let sharedTags = categories.filter(cat => 
-                    rows.every(auth => auth.tags.includes(cat.id))
+                // 2. Find authors that have ALL 3 of those categories
+                let validAuthors = allAuthors.filter(author => 
+                    cols.every(cat => author.tags.includes(cat.id))
                 );
 
-                // 3. IF WE HAVE 3+ SHARED TAGS, WE HAVE A VALID GRID
-                if (sharedTags.length >= 3) {
-                    let cols = sharedTags.sort(() => seededRandom(seed + attempts + 1) - 0.5).slice(0, 3);
+                // 3. If we have at least 3 authors, we have a perfect grid
+                if (validAuthors.length >= 3) {
+                    let rows = validAuthors.sort(() => seededRandom(seed + attempts + 1) - 0.5).slice(0, 3);
                     return { rows, cols };
                 }
                 attempts++;
             }
-            // Fallback just in case
-            return { rows: authors.slice(0,3), cols: categories.slice(0,3) };
+            // Absolute fallback with a known valid set if thousands of attempts fail
+            return { 
+                rows: allAuthors.filter(a => ["Emily Henry", "Sally Rooney", "Taylor Jenkins Reid"].includes(a.name)),
+                cols: allCategories.filter(c => ["lit_fic", "family", "screen"].includes(c.id))
+            };
         }
 
-        const { rows, cols } = generateGuaranteedGrid();
+        const { rows, cols } = generatePerfectGrid();
         let guessesLeft = 9;
         let score = [[0,0,0],[0,0,0],[0,0,0]];
 
@@ -192,11 +217,13 @@
                     div.onclick = () => {
                         const cell = input.parentElement;
                         const authorMatch = (book.author_name || []).some(a => a.toLowerCase().includes(cell.dataset.row.toLowerCase()));
-                        const authorData = authors.find(a => a.name === cell.dataset.row);
+                        const authorData = allAuthors.find(a => a.name === cell.dataset.row);
                         const isCorrect = authorMatch && authorData.tags.includes(cell.dataset.col);
+                        
                         guessesLeft--;
                         document.getElementById('guess-count').innerText = guessesLeft;
                         box.style.display = 'none';
+                        
                         if (isCorrect) {
                             input.value = book.title; cell.classList.add('correct'); input.disabled = true;
                             score[cell.dataset.ridx][cell.dataset.cidx] = 1;
@@ -212,16 +239,22 @@
             }, 400));
         });
 
-        function endGame() { document.querySelectorAll('input').forEach(i => i.disabled = true); document.getElementById('share-btn').style.display = 'block'; }
+        function endGame() { 
+            document.querySelectorAll('input').forEach(i => i.disabled = true); 
+            document.getElementById('share-btn').style.display = 'block'; 
+            alert("Game Over!");
+        }
+
         function shareResult() {
             let text = `Litsquares ${gameDate.toLocaleDateString()}\n`;
             score.forEach(r => text += r.map(c => c ? "🟩" : "⬜").join("") + "\n");
-            navigator.clipboard.writeText(text); alert("Results copied!");
+            navigator.clipboard.writeText(text); alert("Results copied to clipboard!");
         }
+
         function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark"; }
         function toggleInstructions() { document.getElementById('modal-overlay').classList.toggle('active'); }
         function debounce(f, t) { let timer; return (...a) => { clearTimeout(timer); timer = setTimeout(() => f.apply(this, a), t); }; }
-        if (!localStorage.getItem('ls_v5')) { toggleInstructions(); localStorage.setItem('ls_v5', 't'); }
+        if (!localStorage.getItem('ls_v6')) { toggleInstructions(); localStorage.setItem('ls_v6', 't'); }
     </script>
 </body>
 </html>
