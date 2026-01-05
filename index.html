@@ -5,19 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Book Grid | Daily Challenge</title>
     <style>
+        /* CORE LAYOUT */
         * { box-sizing: border-box; }
-        body { background-color: #fdf5e6; font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; padding: 20px 10px; color: #003366; margin: 0; overflow-x: hidden; }
+        body { 
+            background-color: #fdf5e6; 
+            font-family: 'Georgia', serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px 10px; 
+            color: #003366; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
         h1 { font-size: 1.8rem; margin-bottom: 10px; text-align: center; }
         #status-bar { margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; }
-        .game-container { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; grid-template-rows: 65px 100px 100px 100px; border: 3px solid #003366; background-color: #003366; gap: 2px; width: 100%; max-width: 450px; margin: 0 auto; }
-        .cell { display: flex; align-items: center; justify-content: center; background-color: white; padding: 4px; text-align: center; font-weight: bold; position: relative; word-wrap: break-word; }
-        .header { background-color: #fdf5e6; font-size: 0.65rem; text-transform: uppercase; line-height: 1.2; padding: 2px; }
-        input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-family: inherit; font-size: 0.8rem; background: transparent; }
+        
+        /* THE GRID: 4 columns, 4 rows (1 header row + 3 author rows) */
+        .game-container { 
+            display: grid; 
+            grid-template-columns: 80px 1fr 1fr 1fr; 
+            grid-template-rows: 65px 100px 100px 100px; 
+            border: 3px solid #003366; 
+            background-color: #003366; 
+            gap: 2px; 
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .cell { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-color: white; 
+            padding: 4px; 
+            text-align: center; 
+            font-weight: bold; 
+            position: relative; 
+            word-wrap: break-word;
+        }
+
+        .header { 
+            background-color: #fdf5e6; 
+            font-size: 0.65rem; 
+            text-transform: uppercase; 
+            line-height: 1.2;
+            padding: 2px;
+        }
+
+        input { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            outline: none; 
+            text-align: center; 
+            font-family: inherit; 
+            font-size: 0.8rem; 
+            background: transparent;
+        }
+        
         .correct { background-color: #d4edda !important; color: #155724; }
         .wrong { background-color: #f8d7da !important; }
-        .suggestions { position: absolute; top: 0; left: 0; width: 100%; background: white; border: 1px solid #003366; z-index: 100; display: none; max-height: 110px; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        /* SEARCH DROPDOWN */
+        .suggestions { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            background: white; 
+            border: 1px solid #003366; 
+            z-index: 100; 
+            display: none; 
+            max-height: 110px; 
+            overflow-y: auto; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
         .suggestion-item { padding: 12px 8px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #eee; color: black; text-align: left; line-height: 1.3; }
-        @media (min-width: 480px) { .game-container { grid-template-columns: 110px 140px 140px 140px; grid-template-rows: 80px 140px 140px 140px; } .header { font-size: 0.8rem; } input { font-size: 0.95rem; } h1 { font-size: 2.5rem; } }
+
+        /* DESKTOP UPSCALING */
+        @media (min-width: 480px) {
+            .game-container { grid-template-columns: 110px 140px 140px 140px; grid-template-rows: 80px 140px 140px 140px; }
+            .header { font-size: 0.8rem; }
+            input { font-size: 0.95rem; }
+            h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -40,6 +113,7 @@
         let guessesLeft = 9;
         const guessDisplay = document.getElementById('guess-count');
 
+        // 2. DAILY SEED (Changes at 9 PM PT)
         function getDailySeed() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -57,10 +131,10 @@
             }
         }
 
+        // 3. GENERATION LOGIC
         async function initGame() {
-            // Check if authorsPool loaded correctly from authors.js
             if (typeof authorsPool === 'undefined') {
-                document.getElementById('grid').innerHTML = "<div style='color:red; padding:20px;'>Error: authors.js not found or contains errors.</div>";
+                document.getElementById('grid').innerHTML = "<div style='color:red; padding:20px;'>Error: authors.js not loaded correctly.</div>";
                 return;
             }
 
@@ -70,25 +144,25 @@
             let selectedCols, selectedRows;
             let attempts = 0;
 
+            // Strategy: Categories first, then find authors who fit all 3
             while (attempts < 1000) {
-                let shuffledAuthors = [...authorsPool].sort(() => randomFunc() - 0.5);
-                let trialRows = shuffledAuthors.slice(0, 3);
-
-                let commonTags = columnsPool.filter(col => 
-                    trialRows.every(auth => auth.can.includes(col.id))
+                let trialCols = [...columnsPool].sort(() => randomFunc() - 0.5).slice(0, 3);
+                let qualifiedAuthors = authorsPool.filter(auth => 
+                    trialCols.every(col => auth.can.includes(col.id))
                 );
 
-                if (commonTags.length >= 3) {
-                    selectedRows = trialRows;
-                    selectedCols = commonTags.sort(() => randomFunc() - 0.5).slice(0, 3);
+                if (qualifiedAuthors.length >= 3) {
+                    selectedCols = trialCols;
+                    selectedRows = qualifiedAuthors.sort(() => randomFunc() - 0.5).slice(0, 3);
                     break;
                 }
                 attempts++;
             }
 
+            // Safety Fallback
             if (!selectedRows) {
-                selectedRows = authorsPool.slice(0, 3);
                 selectedCols = columnsPool.slice(0, 3);
+                selectedRows = authorsPool.slice(0, 3);
             }
 
             renderGrid(selectedRows, selectedCols);
@@ -111,6 +185,7 @@
             attachInputLogic();
         }
 
+        // 4. SEARCH AND VALIDATION
         function attachInputLogic() {
             const inputs = document.querySelectorAll('.book-input');
             inputs.forEach(input => {
