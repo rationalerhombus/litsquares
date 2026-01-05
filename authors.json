@@ -1,4 +1,4 @@
-const authorsPool = [
+[
   {"name": "Stephen King", "can": ["modern", "movie", "award", "classic"]},
   {"name": "Jane Austen", "can": ["classic", "pre1950", "movie", "award"]},
   {"name": "George Orwell", "can": ["classic", "pre1950", "movie", "award"]},
@@ -403,4 +403,4 @@ const authorsPool = [
   {"name": "Martin Amis", "can": ["modern", "award", "movie", "classic"]},
   {"name": "Pat Barker", "can": ["modern", "award", "movie"]},
   {"name": "Anita Brookner", "can": ["modern", "award", "movie"]}
-];
+]
